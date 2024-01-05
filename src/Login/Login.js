@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import styles from './Login.module.css'
 import Link from 'next/link'
 import configuration from './configuration.json'
-import { Input } from '@/inputControls/input'
+import { Input } from '@/inputControls/Input'
 import { hanldeFiledValidation, handleFormValidation } from '@/validations/appValidation'
 export const Login = () => {
     const [inputControls, setInutControls] = useState(configuration)
@@ -12,7 +12,13 @@ export const Login = () => {
     }
 
     const handleLogin = () => {
-        handleFormValidation()
+        const [isFormInvalid, clonedInputControls, dataObj] = handleFormValidation(inputControls)
+        if (isFormInvalid) {
+            setInutControls(clonedInputControls)
+            return;
+        }
+        console.log("send the request with this data ")
+        console.log(dataObj)
     }
     return (
         <div className='container-fluid'>
@@ -45,4 +51,3 @@ export const Login = () => {
         </div>
     )
 }
-
