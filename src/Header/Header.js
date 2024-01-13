@@ -3,9 +3,7 @@ import styles from './Header.module.css'
 export const Header = () => {
   return (
     <div className={`text-center bg-primary text-white ${styles.header}`}>
-      End to End Application
+      End to End application
     </div>
   )
 }
-
- 

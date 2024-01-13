@@ -1,10 +1,10 @@
 "use client"
 import React, { Fragment } from 'react'
 
-export const Select = ({ type, value, handleChange, model, options, values }) => {
+export const Select = ({ value, handleChange, model, options, values }) => {
     return (
         <Fragment>
-            <select name={model} onChange={handleChange} className='form-control'>
+            <select value={value} name={model} onChange={handleChange} className='form-control'>
                 <option value="">---Please select---</option>
                 {
                     options.map((val, ind) => {

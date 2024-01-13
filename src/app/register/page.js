@@ -6,19 +6,40 @@ import Link from 'next/link'
 import { Input } from '@/inputControls/Input'
 import { Select } from '@/inputControls/Select'
 import { Textarea } from '@/inputControls/Textarea'
-import { hanldeFiledValidation, handleFormValidation } from '@/validations/appValidation'
+import { appStore } from '@/store/appStore'
+import { toast } from 'react-toastify'
+import { hanldeFiledValidation, handleFormValidation, formReset } from '@/validations/appValidation'
+import axios from 'axios'
+import { Api } from '@/common/Api'
 const Register = () => {
     const [inputControls, setInutControls] = useState(configration)
+
     const fnChange = (eve) => {
         setInutControls(hanldeFiledValidation(eve, inputControls))
     }
-    const handleRegister = () => {
-        const [isFormInvalid, clonedInputControls, dataObj] = handleFormValidation(inputControls)
-        if (isFormInvalid) {
-            setInutControls(clonedInputControls)
-            return;
+    const handleRegister = async () => {
+        try {
+            const [isFormInvalid, clonedInputControls, dataObj] = handleFormValidation(inputControls)
+            if (isFormInvalid) {
+                setInutControls(clonedInputControls)
+                return;
+            }
+            appStore.dispatch({ type: "LOADER", payload: true })
+            const res = await Api.fnSendPostReq("std/reg-std", { data: dataObj })
+            const { acknowledged, insertedId } = res?.data
+            if (acknowledged && insertedId) {
+                toast.success("Successfully Inserted")
+                setInutControls(formReset(inputControls))
+            } else {
+                toast.error("Not Inserted, try again");
+            }
+
+        } catch (ex) {
+            console.error("register", ex)
+            toast.error("Somthing went wrong");
+        } finally {
+            appStore.dispatch({ type: "LOADER", payload: false })
         }
-        alert("sending requiest")
     }
     const prepareInputControls = (tag, obj) => {
         switch (tag) {
@@ -34,10 +55,10 @@ const Register = () => {
         <div className='container-fluid'>
             <h2 className='text-center my-3'>Register</h2>
             {
-                inputControls?.map((obj) => {
+                inputControls?.map((obj, index) => {
                     const { lbl, errorMessage, tag } = obj;
 
-                    return <div className='row mb-3'>
+                    return <div key={`div_${index}`} className='row mb-3'>
                         <div className='col-sm-5 text-end'>
                             <b>{lbl}:</b>
                         </div>
